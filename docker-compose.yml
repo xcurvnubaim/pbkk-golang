@@ -1,0 +1,14 @@
+version: '3.8'
+services:
+  db:
+    image: mysql:latest
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: password
+      MYSQL_DATABASE: njajal-gin
+      MYSQL_USER: jarip
+      MYSQL_PASSWORD: jarip123
+    volumes:
+      - ./data:/var/lib/mysql
+    ports:
+      - 3306:3306
