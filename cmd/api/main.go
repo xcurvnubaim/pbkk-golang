@@ -6,21 +6,13 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/xcurvnubaim/pbkk-golang/internal/configs"
 	"github.com/xcurvnubaim/pbkk-golang/internal/database"
-
-	AuthHandler "github.com/xcurvnubaim/pbkk-golang/internal/modules/auth/handler"
-	AuthInterfaces "github.com/xcurvnubaim/pbkk-golang/internal/modules/auth/interfaces"
-	AuthRepository "github.com/xcurvnubaim/pbkk-golang/internal/modules/auth/repository"
-	AuthUseCase "github.com/xcurvnubaim/pbkk-golang/internal/modules/auth/usecase"
-
-	FileHandler "github.com/xcurvnubaim/pbkk-golang/internal/modules/file-uploads/handler"
-	FileInterfaces "github.com/xcurvnubaim/pbkk-golang/internal/modules/file-uploads/interfaces"
-	FileRepository "github.com/xcurvnubaim/pbkk-golang/internal/modules/file-uploads/repository"
-	FileUseCase "github.com/xcurvnubaim/pbkk-golang/internal/modules/file-uploads/usecase"
+	"github.com/xcurvnubaim/pbkk-golang/internal/middleware"
+	"github.com/xcurvnubaim/pbkk-golang/internal/modules/auth"
 )
 
 func main() {
 	// Setup configuration
-	if err := configs.Setup(); err != nil {
+	if err := configs.Setup(".env"); err != nil {
 		panic(err)
 	}
 
@@ -32,23 +24,18 @@ func main() {
 
 	// Start the server
 	r := gin.Default()
-
+	r.Use(middleware.CORSMiddleware())
 	// Setup Database
 	db := database.New()
+	
+	var authRepository auth.IAuthRepository = auth.NewAuthRepository(db)
+	var authService auth.IAuthUseCase = auth.NewAuthUseCase(authRepository)
+	auth.NewAuthHandler(r, authService, "/api/v1/auth")
 
-	// Module Authentication
-	var authRepository AuthInterfaces.AuthRepository = AuthRepository.NewAuthRepository(db)
-	var authUseCase AuthInterfaces.AuthUseCase = AuthUseCase.NewAuthUseCase(authRepository)
-	AuthHandler.NewAuthHandler(r, authUseCase)
-
-	// Module File Uploads
-	var fileRepository FileInterfaces.FileRepository = FileRepository.NewFileRepository(db)
-	var fileUseCase FileInterfaces.FileUseCase = FileUseCase.NewFileUseCase(fileRepository)
-	FileHandler.NewFileHandler(r, fileUseCase)
-
+	
 	r.GET("/ping", func(c *gin.Context) {
 		c.JSON(200, gin.H{
-			"message": "pong",
+			"message": "pong test",
 		})
 	})
 

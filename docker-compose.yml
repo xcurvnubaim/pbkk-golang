@@ -4,10 +4,10 @@ services:
     image: mysql:latest
     restart: always
     environment:
-      MYSQL_ROOT_PASSWORD: password
-      MYSQL_DATABASE: njajal-gin
-      MYSQL_USER: jarip
-      MYSQL_PASSWORD: jarip123
+      MYSQL_ROOT_PASSWORD: passwordRoot
+      MYSQL_DATABASE: ${DB_NAME}
+      MYSQL_USER: ${DB_USER}
+      MYSQL_PASSWORD: ${DB_PASSWORD}
     volumes:
       - ./data:/var/lib/mysql
     ports:
