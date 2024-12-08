@@ -12,6 +12,7 @@ import (
 	"github.com/xcurvnubaim/pbkk-golang/internal/middleware"
 	"github.com/xcurvnubaim/pbkk-golang/internal/modules/auth"
 	"github.com/xcurvnubaim/pbkk-golang/internal/modules/customer"
+	"github.com/xcurvnubaim/pbkk-golang/internal/modules/merchant"
 )
 
 func main() {
@@ -40,6 +41,13 @@ func main() {
 	var customerService customer.IUseCase = customer.NewuseCase(customerRepository)
 	customer.NewHandler(r, customerService, "/api/v1/customer")
 
+	var merchantRepository merchant.IRepository = merchant.NewRepository(db)
+	var merchantService merchant.IUseCase = merchant.NewuseCase(merchantRepository)
+	merchant.NewHandler(r, merchantService, "/api/merchant/create")
+	merchant.NewHandler(r, merchantService, "/api/merchant/delete")
+	merchant.NewHandler(r, merchantService, "/api/merchant/get")
+	merchant.NewHandler(r, merchantService, "/api/merchant/update")
+
 	// Serve static files
 	// r.Static("/static", "./static") // Serve files with prefix `/static`
 
@@ -60,6 +68,7 @@ func main() {
 
 // mapStaticRoutes dynamically maps routes for index.html files
 func mapStaticRoutes(router *gin.Engine, baseDir string) {
+	fmt.Printf("masuk mapstatic route")
 	err := filepath.Walk(baseDir, func(path string, info os.FileInfo, err error) error {
 		if err != nil {
 			return err
@@ -72,13 +81,18 @@ func mapStaticRoutes(router *gin.Engine, baseDir string) {
 
 		// Generate route path from file path
 		routePath := strings.TrimPrefix(path, baseDir)
-		routePath = strings.TrimSuffix(routePath, "/index.html")
-		routePath = strings.ReplaceAll(routePath, "\\", "/") // Windows compatibility
+		routePath = strings.TrimSuffix(routePath, "index.html")
+
+		// Normalize path separators for cross-platform compatibility
+		routePath = filepath.ToSlash(routePath)
+
+		// Remove the "static" prefix if present
+		routePath = strings.TrimPrefix(routePath, "static/")
 
 		if routePath == "" {
 			routePath = "/"
 		}
-		routePath = strings.TrimPrefix(routePath, "static")
+
 		// Serve the index.html file at the generated route
 		router.StaticFile(routePath, path)
 		fmt.Printf("Mapped %s to %s\n", routePath, path)

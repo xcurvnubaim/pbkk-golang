@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Customer Form</title>
+
+    <!-- Include Tailwind CSS via CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 flex items-center justify-center h-screen">
+    <div class="bg-white p-8 rounded-lg shadow-lg max-w-md w-full">
+        <h1 class="text-2xl font-bold mb-6 text-center">Create Customer</h1>
+
+        <!-- Form -->
+        <form id="customerForm">
+            <div class="mb-4">
+                <label for="nama" class="block text-gray-700 font-medium">Nama</label>
+                <input id="nama" type="text" placeholder="Enter full name"
+                    class="w-full mt-1 p-2 border rounded-lg focus:ring-2 focus:ring-blue-300" required>
+            </div>
+
+            <div class="mb-4">
+                <label for="email" class="block text-gray-700 font-medium">Email</label>
+                <input id="email" type="text" placeholder="Enter Email"
+                    class="w-full mt-1 p-2 border rounded-lg focus:ring-2 focus:ring-blue-300" min="0" required>
+            </div>
+
+            <div class="mb-4">
+                <label for="alamat" class="block text-gray-700 font-medium">Alamat</label>
+                <input id="alamat" type="text" placeholder="Enter Adress"
+                    class="w-full mt-1 p-2 border rounded-lg focus:ring-2 focus:ring-blue-300" required>
+            </div>
+
+            <button type="submit"
+                class="w-full bg-blue-500 text-white font-bold py-2 px-4 rounded-lg shadow hover:bg-blue-600">
+                Submit
+            </button>
+        </form>
+
+        <!-- Response Message -->
+        <p id="response" class="mt-4 text-center text-red-600 font-medium"></p>
+    </div>
+
+    <script>
+        document.getElementById('customerForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const nama = document.getElementById('nama').value;
+            const email = document.getElementById('email').value;
+            const alamat = document.getElementById('alamat').value;
+            console.log(name,alamat,email)
+
+            try {
+                const response = await fetch('http://localhost:3000/api/merchant/create', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        nama,
+                        email,
+                        alamat,
+                    }),
+                });
+
+                const result = await response.json();
+
+                if (result.status) {
+                    document.getElementById('response').innerText = 
+                        `Success: ${result.message}`;
+                    document.getElementById('response').className = "mt-4 text-center text-green-600 font-medium";
+                } else {
+                    document.getElementById('response').innerText = 
+                        `Failed: ${result.error || 'Unknown error'}`;
+                }
+            } catch (error) {
+                console.error('API call error:', error);
+                document.getElementById('response').innerText =
+                    'An error occurred while connecting to the server.';
+            }
+        });
+    </script>
+</body>
+</html>
