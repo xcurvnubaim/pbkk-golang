@@ -1,7 +1,6 @@
 package auth
 
 import (
-	"github.com/google/uuid"
 	"github.com/xcurvnubaim/pbkk-golang/internal/modules/common"
 	"github.com/xcurvnubaim/pbkk-golang/internal/pkg/e"
 	"gorm.io/gorm"
@@ -10,7 +9,7 @@ import (
 type IAuthRepository interface {
 	RegisterUser(*RegisterUserDomain) e.ApiError
 	GetUserByUsername(string) (*UserModel, e.ApiError)
-	GetUserByID(uuid.UUID) (*UserModel, e.ApiError)
+	GetUserByID(int32) (*UserModel, e.ApiError)
 	GetAllUser() ([]UserModel, e.ApiError)
 }
 
@@ -52,7 +51,7 @@ func (r *authRepository) GetUserByUsername(username string) (*UserModel, e.ApiEr
 	return user, nil
 }
 
-func (r *authRepository) GetUserByID(id uuid.UUID) (*UserModel, e.ApiError) {
+func (r *authRepository) GetUserByID(id int32) (*UserModel, e.ApiError) {
 	user := &UserModel{}
 	result := r.db.Where("id = ?", id).First(user)
 	if result.Error != nil {

@@ -1,13 +1,12 @@
 package auth
 
 import (
-	"github.com/google/uuid"
 	"github.com/xcurvnubaim/pbkk-golang/internal/modules/common"
 )
 
 type (
 	RegisterUserDomain struct {
-		Id       uuid.UUID
+		Id       int32
 		Username string
 		Password string
 	}
@@ -20,7 +19,7 @@ type (
 	}
 
 	PayloadToken struct {
-		ID   uuid.UUID
+		ID   int32
 		Role string
 	}
 )

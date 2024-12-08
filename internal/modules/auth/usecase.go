@@ -7,7 +7,6 @@ import (
 	"time"
 
 	jwt "github.com/golang-jwt/jwt/v5"
-	"github.com/google/uuid"
 	"github.com/xcurvnubaim/pbkk-golang/internal/configs"
 	"github.com/xcurvnubaim/pbkk-golang/internal/pkg/e"
 	"golang.org/x/crypto/bcrypt"
@@ -16,7 +15,7 @@ import (
 type IAuthUseCase interface {
 	RegisterUser(*RegisterUserRequestDTO) e.ApiError
 	LoginUser(*LoginUserRequestDTO) (*LoginUserResponseDTO, e.ApiError)
-	GetMe(uuid.UUID) (*GetMeResponseDTO, e.ApiError)
+	GetMe(int32) (*GetMeResponseDTO, e.ApiError)
 	HashPassword(string) (string, error)
 	VerifyPassword(string, string) bool
 	GenerateToken(PayloadToken) (string, error)
@@ -48,7 +47,6 @@ func (uc *authUseCase) RegisterUser(data *RegisterUserRequestDTO) e.ApiError {
 	}
 
 	user := &RegisterUserDomain{
-		Id:       uuid.New(),
 		Username: data.Username,
 		Password: hashedPassword,
 	}
@@ -88,7 +86,7 @@ func (uc *authUseCase) LoginUser(data *LoginUserRequestDTO) (*LoginUserResponseD
 	}, nil
 }
 
-func (uc *authUseCase) GetMe(userID uuid.UUID) (*GetMeResponseDTO, e.ApiError) {
+func (uc *authUseCase) GetMe(userID int32) (*GetMeResponseDTO, e.ApiError) {
 	user, err := uc.authRepository.GetUserByID(userID)
 	if err != nil {
 		return &GetMeResponseDTO{}, e.NewApiError(404, "User not found")
@@ -140,7 +138,7 @@ func (uc *authUseCase) GetAllUser() (*GetAllUsersResponseDTO, e.ApiError) {
 	var response []GetUser
 	for _, user := range users {
 		response = append(response, GetUser{
-			ID:       user.ID.String(),
+			ID:       user.ID,
 			Username: user.Username,
 		})
 	}
@@ -159,7 +157,7 @@ func (uc *authUseCase) GetUserByUsername(username string) (*GetUser, e.ApiError)
 		return nil, e.NewApiError(500, fmt.Sprintf("Internal Server Error (%d)", err.Code()))
 	}
 	return &GetUser{
-		ID:       user.ID.String(),
+		ID:       user.ID,
 		Username: user.Username,
 	}, nil
 }

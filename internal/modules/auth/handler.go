@@ -2,7 +2,6 @@ package auth
 
 import (
 	"github.com/gin-gonic/gin"
-	"github.com/google/uuid"
 	"github.com/xcurvnubaim/pbkk-golang/internal/middleware"
 	"github.com/xcurvnubaim/pbkk-golang/internal/pkg/app"
 	CustomValidator "github.com/xcurvnubaim/pbkk-golang/internal/pkg/validator"
@@ -72,7 +71,7 @@ func (ah *AuthHandler) Login(c *gin.Context) {
 		c.JSON(err.Code(), app.NewErrorResponse("Failed to login user", &errMsg))
 		return
 	}
-
+	c.SetCookie("token", token.Token, 3600, "/", "localhost:3000", false, false)
 	c.JSON(200, app.NewSuccessResponse("User logged in successfully", &token))
 }
 
@@ -84,29 +83,17 @@ func (ah *AuthHandler) GetMe(c *gin.Context) {
 		return
 	}
 
-	// Perform a type assertion to ensure userID is a string
-	userIDStr, ok := userID.(string)
-	if !ok {
-		c.JSON(400, app.NewErrorResponse("Invalid user ID type", nil))
-		return
-	}
-
-	// Convert string to UUID
-	parsedID, errUuid := uuid.Parse(userIDStr)
-	if errUuid != nil {
-		c.JSON(400, app.NewErrorResponse("Invalid user ID", nil))
-		return
-	}
+	// Convert userId to int32
+	Id := int32(userID.(float64))
 
 	// Now call GetMe with the UUID
-	user, err := ah.authUseCase.GetMe(parsedID)
+	user, err := ah.authUseCase.GetMe(Id)
 	if err != nil {
 		// Assuming err has a method Code() to retrieve HTTP status code
 		var errMsg = err.Error()
 		c.JSON(err.Code(), app.NewErrorResponse("Failed to get user data", &errMsg))
 		return
 	}
-
 	c.JSON(200, app.NewSuccessResponse("User data retrieved successfully", user))
 }
 

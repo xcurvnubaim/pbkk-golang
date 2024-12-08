@@ -28,7 +28,7 @@ type (
 	}
 
 	GetUser struct {
-		ID       string `json:"id"`
+		ID       int32 `json:"id"`
 		Username string `json:"username"`
 	}
 
