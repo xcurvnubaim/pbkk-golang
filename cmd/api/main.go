@@ -11,6 +11,7 @@ import (
 	"github.com/xcurvnubaim/pbkk-golang/internal/database"
 	"github.com/xcurvnubaim/pbkk-golang/internal/middleware"
 	"github.com/xcurvnubaim/pbkk-golang/internal/modules/auth"
+	"github.com/xcurvnubaim/pbkk-golang/internal/modules/customer"
 )
 
 func main() {
@@ -34,6 +35,10 @@ func main() {
 	var authRepository auth.IAuthRepository = auth.NewAuthRepository(db)
 	var authService auth.IAuthUseCase = auth.NewAuthUseCase(authRepository)
 	auth.NewAuthHandler(r, authService, "/api/v1/auth")
+
+	var customerRepository customer.IRepository = customer.NewRepository(db)
+	var customerService customer.IUseCase = customer.NewuseCase(customerRepository)
+	customer.NewHandler(r, customerService, "/api/v1/customer")
 
 	// Serve static files
 	// r.Static("/static", "./static") // Serve files with prefix `/static`
