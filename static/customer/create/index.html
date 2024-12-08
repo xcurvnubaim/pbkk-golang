@@ -58,7 +58,7 @@
             const no_hp = document.getElementById('no_hp').value;
 
             try {
-                const response = await fetch('http://localhost:3000/api/v1/customer', {
+                const response = await fetch('/api/v1/customer', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
