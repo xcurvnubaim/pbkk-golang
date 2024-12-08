@@ -5,6 +5,40 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Register</title>
   <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    @keyframes slideIn {
+      from {
+        transform: translateY(-100%);
+        opacity: 0;
+      }
+      to {
+        transform: translateY(0);
+        opacity: 1;
+      }
+    }
+
+    @keyframes slideOut {
+      from {
+        transform: translateY(0);
+        opacity: 1;
+      }
+      to {
+        transform: translateY(-100%);
+        opacity: 0;
+      }
+    }
+
+    .toast {
+      position: fixed;
+      top: 1rem;
+      right: 1rem;
+      animation: slideIn 0.3s ease-in-out;
+    }
+
+    .toast.hide {
+      animation: slideOut 0.3s ease-in-out forwards;
+    }
+  </style>
 </head>
 <body class="bg-gray-100 flex items-center justify-center min-h-screen">
   <div class="w-full max-w-md bg-white p-8 rounded-lg shadow-md">
@@ -36,6 +70,10 @@
     <div id="message" class="mt-4 text-center text-sm text-gray-600"></div>
   </div>
 
+  <div id="toast" class="toast hidden bg-red-500 text-white px-6 py-3 rounded-lg shadow-lg">
+    <span id="toastMessage"></span>
+  </div>
+
   <script>
     document.getElementById('registerForm').addEventListener('submit', async function(event) {
       event.preventDefault();
@@ -43,6 +81,14 @@
       const username = document.getElementById('username').value;
       const password = document.getElementById('password').value;
       const confirmPassword = document.getElementById('confirmPassword').value;
+
+      if(password !== confirmPassword) {
+        const messageDiv = document.getElementById('message');
+        messageDiv.textContent = 'Passwords do not match.';
+        messageDiv.className = 'mt-4 text-red-600 text-center text-sm';
+        showToast('Passwords do not match.', 'error');
+        return;
+      }
 
       // Prepare data payload
       const data = {
@@ -67,17 +113,44 @@
         if (response.ok) {
           messageDiv.textContent = 'Registration successful!';
           messageDiv.className = 'mt-4 text-green-600 text-center text-sm';
+          showToast('Registration successful!', 'success');
+          setTimeout(() => {
+            window.location.href = '/dashboard';
+          }, 3000);
         } else {
-          messageDiv.textContent = `Error: ${result.message || 'Something went wrong'}`;
+          messageDiv.textContent = `Error: ${result.error || 'Something went wrong'}`;
           messageDiv.className = 'mt-4 text-red-600 text-center text-sm';
+          showToast(`Error: ${result.error || 'Something went wrong'}`, 'error');
         }
       } catch (error) {
         console.error('Error:', error);
         const messageDiv = document.getElementById('message');
         messageDiv.textContent = 'An error occurred while registering.';
         messageDiv.className = 'mt-4 text-red-600 text-center text-sm';
+        showToast('An error occurred while registering.', 'error');
       }
     });
+
+    function showToast(message, type = 'error') {
+      const toast = document.getElementById('toast');
+      const toastMessage = document.getElementById('toastMessage');
+
+      // Set message and style
+      toastMessage.textContent = message;
+      toast.classList.remove('hidden', 'bg-red-500', 'bg-green-500');
+      toast.classList.add(type === 'error' ? 'bg-red-500' : 'bg-green-500');
+
+      // Show toast
+      toast.classList.remove('hide');
+
+      // Auto dismiss after 3 seconds
+      setTimeout(() => {
+        toast.classList.add('hide');
+        setTimeout(() => {
+          toast.classList.add('hidden');
+        }, 300);
+      }, 1500);
+    }
   </script>
 </body>
 </html>

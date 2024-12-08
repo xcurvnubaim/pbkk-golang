@@ -3,35 +3,58 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Dashboard</title>
-  <script src="https://cdn.tailwindcss.com"></script>
+  <title>Shop Management Dashboard</title>
+  <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    body {
+      display: flex;
+      height: 100vh;
+    }
+    .sidebar {
+      width: 250px;
+      background-color: #007bff;
+      color: white;
+      padding: 15px;
+    }
+    .sidebar a {
+      color: white;
+      text-decoration: none;
+      display: block;
+      padding: 10px 0;
+    }
+    .sidebar a:hover {
+      background-color: #0056b3;
+    }
+    .content {
+      flex-grow: 1;
+      padding: 20px;
+    }
+  </style>
 </head>
-<body class="bg-gray-100 flex justify-center items-center h-screen">
-  <div id="dashboard" class="hidden">
-    <div class="bg-white shadow-md rounded-lg p-8 w-full max-w-sm text-center">
-      <h1 class="text-2xl font-bold text-gray-700 mb-4">Dashboard</h1>
-      <p class="text-lg">Hello, <span id="username" class="font-semibold"></span>!</p>
-      <button
-        id="logoutBtn"
-        class="w-full bg-red-600 text-white px-4 py-2 mt-4 rounded-md hover:bg-red-700 focus:outline-none"
-      >
-        Logout
-      </button>
+<body>
+  <div class="sidebar">
+    <h2>Shop Management</h2>
+    <p>Hello, <span id="username" class="font-weight-bold"></span>!</p>
+    <a href="/products">Manage Products</a>
+    <a href="/orders">View Orders</a>
+    <a href="/customers">Customer List</a>
+    <button id="logoutBtn" class="btn btn-danger mt-4">Logout</button>
+  </div>
+  <div class="content">
+    <div id="dashboard" class="d-none">
+      <h1 class="h3 mb-4">Dashboard</h1>
+      <!-- Add your dashboard content here -->
+    </div>
+    <div id="loginRedirect" class="d-none">
+      <div class="alert alert-warning" role="alert">
+        You are not logged in! <a href="../auth/login" class="alert-link">Go to Login</a>.
+      </div>
     </div>
   </div>
 
-  <div id="loginRedirect" class="hidden">
-    <div class="bg-white shadow-md rounded-lg p-8 w-full max-w-sm text-center">
-      <h1 class="text-2xl font-bold text-gray-700 mb-4">You are not logged in!</h1>
-      <a
-        href="/auth/login"
-        class="w-full inline-block bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700 focus:outline-none"
-      >
-        Go to Login
-      </a>
-    </div>
-  </div>
-
+  <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+  <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
   <script>
     // Helper function to get cookies
     function getCookie(name) {
@@ -45,7 +68,7 @@
       console.log(token);
 
       if (!token) {
-        document.getElementById('loginRedirect').classList.remove('hidden');
+        document.getElementById('loginRedirect').classList.remove('d-none');
         return;
       }
 
@@ -62,15 +85,15 @@
 
         if (response.ok && data.status) {
           // Show dashboard
-          document.getElementById('dashboard').classList.remove('hidden');
+          document.getElementById('dashboard').classList.remove('d-none');
           document.getElementById('username').textContent = data.data.username;
         } else {
           // Invalid token or error
-          document.getElementById('loginRedirect').classList.remove('hidden');
+          document.getElementById('loginRedirect').classList.remove('d-none');
         }
       } catch (error) {
         console.error('Error fetching user data:', error);
-        document.getElementById('loginRedirect').classList.remove('hidden');
+        document.getElementById('loginRedirect').classList.remove('d-none');
       }
     }
 

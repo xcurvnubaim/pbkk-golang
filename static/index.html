@@ -3,9 +3,166 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Pbkk Golang Pos Application</title>
+    <title>POS Application</title>
+    <style>
+        :root {
+            --primary-blue: #2196F3;
+            --dark-blue: #1976D2;
+            --light-blue: #BBDEFB;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f5f5f5;
+            color: #333;
+        }
+
+        header {
+            background-color: var(--primary-blue);
+            color: white;
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        header .logo {
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+
+        nav ul {
+            list-style-type: none;
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+
+        nav ul li {
+            display: inline;
+        }
+
+        nav ul li a {
+            color: white;
+            text-decoration: none;
+            font-weight: bold;
+            padding: 8px 15px;
+            border-radius: 4px;
+            transition: all 0.3s ease;
+        }
+
+        nav ul li a:hover {
+            background-color: var(--dark-blue);
+        }
+
+        .auth-buttons a {
+            border: 2px solid white;
+        }
+
+        .auth-buttons a:hover {
+            background-color: white;
+            color: var(--primary-blue);
+        }
+
+        main {
+            max-width: 1200px;
+            margin: 20px auto;
+            padding: 20px;
+            background: white;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            border-radius: 8px;
+        }
+
+        h1 {
+            color: var(--primary-blue);
+            margin-bottom: 20px;
+        }
+
+        .content {
+            font-size: 1rem;
+            line-height: 1.6;
+        }
+
+        .mobile-menu {
+            display: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+        }
+
+        @media (max-width: 768px) {
+            .mobile-menu {
+                display: block;
+            }
+
+            nav ul {
+                display: none;
+                position: absolute;
+                top: 60px;
+                left: 0;
+                right: 0;
+                background-color: var(--primary-blue);
+                flex-direction: column;
+                padding: 20px;
+                gap: 20px;
+            }
+
+            nav ul.active {
+                display: flex;
+            }
+
+            nav ul li {
+                width: 100%;
+                text-align: center;
+            }
+
+            nav ul li a {
+                display: block;
+                padding: 10px;
+            }
+        }
+    </style>
 </head>
 <body>
-    Halo
+    <header>
+        <div class="logo">POS Application</div>
+        <div class="mobile-menu">☰</div>
+        <nav>
+            <ul>
+                <li><a href="/">Home</a></li>
+                <li><a href="#products">Products</a></li>
+                <li><a href="#sales">Sales</a></li>
+                <li class="auth-buttons"><a href="/auth/login">Login</a></li>
+                <li class="auth-buttons"><a href="/auth/register">Register</a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        <h1>Welcome to the POS Application</h1>
+        <div class="content">
+            <p>
+                This application is designed to streamline your point-of-sale operations, 
+                offering a seamless experience for managing products, tracking sales, and generating reports.
+            </p>
+            <p>
+                Use the navigation bar above to access different features of the application.
+            </p>
+        </div>
+    </main>
+
+    <script>
+        const mobileMenu = document.querySelector('.mobile-menu');
+        const nav = document.querySelector('nav ul');
+
+        mobileMenu.addEventListener('click', () => {
+            nav.classList.toggle('active');
+        });
+    </script>
 </body>
 </html>
