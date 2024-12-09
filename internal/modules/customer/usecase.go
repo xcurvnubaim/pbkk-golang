@@ -6,6 +6,7 @@ import (
 
 type IUseCase interface {
 	CreateCustomer(request *CreateCustomerRequestDTO) (*CreateCustomerResponseDTO, e.ApiError)
+	FindAllCustomer() (*FindAllCustomerResponseDTO, e.ApiError)
 }
 
 type useCase struct {
@@ -40,4 +41,25 @@ func (u *useCase) CreateCustomer(request *CreateCustomerRequestDTO) (*CreateCust
 	}
 
 	return response, nil
+}
+
+func (u *useCase) FindAllCustomer() (*FindAllCustomerResponseDTO, e.ApiError) {
+	customers, err := u.repository.FindAllCustomer()
+	if err != nil {
+		return nil, err
+	}
+
+	var response FindAllCustomerResponseDTO
+	for _, customer := range customers {
+		response.Customers = append(response.Customers, CustomerDTO{
+			ID:   customer.ID,
+			Nama: customer.Nama,
+			Umur: customer.Umur,
+			Asal: customer.Asal,
+			NoHp: customer.NoHp,
+		})
+	}
+
+
+	return &response, nil
 }

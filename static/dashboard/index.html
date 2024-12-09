@@ -7,47 +7,43 @@
   <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
   <style>
     body {
-      display: flex;
-      height: 100vh;
+      margin: 0;
     }
-    .sidebar {
-      width: 250px;
-      background-color: #007bff;
-      color: white;
-      padding: 15px;
-    }
-    .sidebar a {
-      color: white;
-      text-decoration: none;
-      display: block;
-      padding: 10px 0;
-    }
-    .sidebar a:hover {
-      background-color: #0056b3;
-    }
-    .content {
-      flex-grow: 1;
-      padding: 20px;
+    .sidebar .nav-link:hover {
+      background-color: rgba(255, 255, 255, 0.1);
     }
   </style>
 </head>
 <body>
-  <div class="sidebar">
-    <h2>Shop Management</h2>
-    <p>Hello, <span id="username" class="font-weight-bold"></span>!</p>
-    <a href="/products">Manage Products</a>
-    <a href="/orders">View Orders</a>
-    <a href="/customers">Customer List</a>
-    <button id="logoutBtn" class="btn btn-danger mt-4">Logout</button>
-  </div>
-  <div class="content">
-    <div id="dashboard" class="d-none">
-      <h1 class="h3 mb-4">Dashboard</h1>
-      <!-- Add your dashboard content here -->
-    </div>
-    <div id="loginRedirect" class="d-none">
-      <div class="alert alert-warning" role="alert">
-        You are not logged in! <a href="../auth/login" class="alert-link">Go to Login</a>.
+  <div class="d-flex vh-100">
+    <!-- Sidebar -->
+    <nav class="sidebar d-flex flex-column p-3 bg-primary text-white vh-100">
+      <h2>Shop Management</h2>
+      <p>Hello, <span id="username" class="font-weight-bold"></span>!</p>
+      <ul class="nav flex-column">
+        <li class="nav-item">
+          <a class="nav-link text-white" href="/products">Manage Products</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link text-white" href="/orders">View Orders</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link text-white" href="/customers">Customer List</a>
+        </li>
+      </ul>
+      <button id="logoutBtn" class="btn btn-danger mt-auto">Logout</button>
+    </nav>
+
+    <!-- Content Area -->
+    <div class="content flex-grow-1 p-4">
+      <div id="dashboard" class="d-none">
+        <h1 class="h3 mb-4">Dashboard</h1>
+        <!-- Add your dashboard content here -->
+      </div>
+      <div id="loginRedirect" class="d-none">
+        <div class="alert alert-warning" role="alert">
+          You are not logged in! <a href="../auth/login" class="alert-link">Go to Login</a>.
+        </div>
       </div>
     </div>
   </div>

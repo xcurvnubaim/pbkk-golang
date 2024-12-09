@@ -15,4 +15,17 @@ type (
 		Asal string `gorm:"column:asal"`
 		NoHp string `gorm:"column:no_hp"`
 	}
+
+	CustomerDTO struct {
+		ID int32 `gorm:"id"`
+		Nama string `gorm:"column:nama"`
+		Umur int32  `gorm:"column:umur"`
+		Asal string `gorm:"column:asal"`
+		NoHp string `gorm:"column:no_hp"`
+	}
+
+	FindAllCustomerResponseDTO struct {
+		Customers []CustomerDTO `json:"customers"`
+	}
+
 )

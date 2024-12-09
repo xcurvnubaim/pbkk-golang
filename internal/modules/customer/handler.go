@@ -23,6 +23,7 @@ func NewHandler(app *gin.Engine, useCase IUseCase, prefixApi string) {
 func (h *Handler) Routes(prefix string) {
 	customer := h.app.Group(prefix)
 	{
+		customer.GET("/", h.GetCustomer)
 		customer.POST("/", h.CreateCustomer)
 		// authentication.POST("/register", h.Register)
 		// authentication.POST("/login", h.Login)
@@ -48,6 +49,18 @@ func (h *Handler) CreateCustomer(c *gin.Context) {
 	if apiErr != nil {
 		errMsg := apiErr.Error()
 		c.JSON(apiErr.Code(), app.NewErrorResponse("Failed to create customer", &errMsg))
+		return
+	}
+
+	c.JSON(200, app.NewSuccessResponse("User logged in successfully", &res))
+}
+
+func (h *Handler) GetCustomer(c *gin.Context) {
+	res, apiErr := h.useCase.FindAllCustomer()
+
+	if apiErr != nil {
+		errMsg := apiErr.Error()
+		c.JSON(apiErr.Code(), app.NewErrorResponse("Failed to get customer", &errMsg))
 		return
 	}
 

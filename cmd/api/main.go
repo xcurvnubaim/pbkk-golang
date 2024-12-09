@@ -13,6 +13,9 @@ import (
 	"github.com/xcurvnubaim/pbkk-golang/internal/modules/auth"
 	"github.com/xcurvnubaim/pbkk-golang/internal/modules/customer"
 	"github.com/xcurvnubaim/pbkk-golang/internal/modules/merchant"
+	"github.com/xcurvnubaim/pbkk-golang/internal/modules/rayyan/controllers"
+	"github.com/xcurvnubaim/pbkk-golang/internal/modules/rayyan/utils"
+	db2 "github.com/xcurvnubaim/pbkk-golang/internal/modules/rayyan/db" 
 )
 
 func main() {
@@ -43,10 +46,36 @@ func main() {
 
 	var merchantRepository merchant.IRepository = merchant.NewRepository(db)
 	var merchantService merchant.IUseCase = merchant.NewuseCase(merchantRepository)
-	merchant.NewHandler(r, merchantService, "/api/merchant/create")
-	merchant.NewHandler(r, merchantService, "/api/merchant/delete")
-	merchant.NewHandler(r, merchantService, "/api/merchant/get")
-	merchant.NewHandler(r, merchantService, "/api/merchant/update")
+	merchant.NewHandler(r, merchantService, "/api/v1/merchant")
+
+	db2.DB = db
+
+	auth := r.Group("/api/v2")
+	auth.Use(utils.AuthMiddleware()) // Middleware for JWT token validation
+	{
+		// Sales Report Route (protected)
+		auth.GET("/sales-report", controllers.GetSalesReport)
+
+		// auth.POST("/users", controllers.Register)
+		// auth.GET("/users", controllers.GetAllUsers)
+		// auth.PUT("/users/:id", controllers.UpdateUser)
+		// auth.DELETE("/users/:id", controllers.DeleteUser)
+		// Product Routes	
+		auth.POST("/products", controllers.CreateProduct) // Create product
+		auth.GET("/products", controllers.GetProducts)    // Get all products
+		// auth.GET("/products/:id", controllers.GetTransactionByID) // Get product by ID
+		auth.PUT("/products/:id", controllers.UpdateProduct)    // Update product
+		auth.DELETE("/products/:id", controllers.DeleteProduct) // Delete Product by ID
+
+		// Stock Routes
+		auth.POST("/stocks", controllers.CreateStock) // Create stock for product
+
+		// Transaction Routes
+		auth.GET("/transactions", controllers.GetTransactions)
+		auth.GET("/transactions/:id", controllers.GetTransactionByID)
+		auth.POST("/transactions", controllers.CreateTransaction)
+		// auth.GET("/transactions", controllers.GetTransactions)    // Get All Transactions
+	}
 
 	// Serve static files
 	// r.Static("/static", "./static") // Serve files with prefix `/static`

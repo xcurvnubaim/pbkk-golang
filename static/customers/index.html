@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Shop Management Dashboard</title>
+    <link
+      href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <style>
+      body {
+        margin: 0;
+      }
+      .sidebar .nav-link:hover {
+        background-color: rgba(255, 255, 255, 0.1);
+      }
+    </style>
+  </head>
+  <body>
+    <div class="d-flex vh-100">
+      <!-- Sidebar -->
+      <nav class="sidebar d-flex flex-column p-3 bg-primary text-white vh-100">
+        <h2>Shop Management</h2>
+        <p>Hello, <span id="username" class="font-weight-bold"></span>!</p>
+        <ul class="nav flex-column">
+          <li class="nav-item">
+            <a class="nav-link text-white" href="/products">Manage Products</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link text-white" href="/orders">View Orders</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link text-white" href="/customers">Customer List</a>
+          </li>
+        </ul>
+        <button id="logoutBtn" class="btn btn-danger mt-auto">Logout</button>
+      </nav>
+
+      <!-- Content Area -->
+      <div class="content flex-grow-1 p-4">
+        <div id="dashboard" class="d-none">
+          <h1 class="h3 mb-4">Dashboard</h1>
+          <!-- Add your dashboard content here -->
+        </div>
+        <!-- Add this inside the content div -->
+        <div id="customerTable" class="mt-4">
+          <h2 class="mb-3">Customer List</h2>
+
+          <!-- Loading spinner -->
+          <div id="loading" class="text-center d-none">
+            <div class="spinner-border text-primary" role="status">
+              <span class="sr-only">Loading...</span>
+            </div>
+          </div>
+
+          <!-- Table -->
+          <div class="table-responsive">
+            <table class="table table-striped table-hover">
+              <thead class="thead-dark">
+                <tr>
+                  <th>ID</th>
+                  <th>Name</th>
+                  <th>Age</th>
+                  <th>City</th>
+                  <th>Phone</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="customerTableBody"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.5.4/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+    <script>
+      // Helper function to get cookies
+      function getCookie(name) {
+        const value = `; ${document.cookie}`;
+        const parts = value.split(`; ${name}=`);
+        if (parts.length === 2) return parts.pop().split(";").shift();
+      }
+
+      async function checkLogin() {
+        const token = getCookie("token");
+        console.log(token);
+
+        if (!token) {
+          document.getElementById("loginRedirect").classList.remove("d-none");
+          return;
+        }
+
+        try {
+          const response = await fetch("/api/v1/auth/me", {
+            method: "GET",
+            headers: {
+              Authorization: `Bearer ${token}`,
+              "Content-Type": "application/json",
+            },
+          });
+
+          const data = await response.json();
+
+          if (response.ok && data.status) {
+            // Show dashboard
+            document.getElementById("dashboard").classList.remove("d-none");
+            document.getElementById("username").textContent =
+              data.data.username;
+          } else {
+            // Invalid token or error
+            document.getElementById("loginRedirect").classList.remove("d-none");
+          }
+        } catch (error) {
+          console.error("Error fetching user data:", error);
+          document.getElementById("loginRedirect").classList.remove("d-none");
+        }
+      }
+
+      // Logout functionality
+      document.getElementById("logoutBtn")?.addEventListener("click", () => {
+        document.cookie = "token=; Max-Age=0; path=/"; // Clear cookie
+        window.location.reload(); // Reload the page
+      });
+
+      // Check login status on page load
+      checkLogin();
+    </script>
+
+    <script>
+      async function fetchCustomers() {
+        try {
+          const loading = document.getElementById("loading");
+          loading.classList.remove("d-none");
+
+          const response = await fetch("http://localhost:3000/api/v1/customer");
+          const result = await response.json();
+
+          if (result.status) {
+            populateTable(result.data.customers);
+          } else {
+            console.error("Failed to fetch customers:", result.error);
+          }
+        } catch (error) {
+          console.error("Error fetching customers:", error);
+        } finally {
+          loading.classList.add("d-none");
+        }
+      }
+
+      function populateTable(customers) {
+        const tableBody = document.getElementById("customerTableBody");
+        tableBody.innerHTML = "";
+
+        customers.forEach((customer) => {
+          const row = document.createElement("tr");
+          row.innerHTML = `
+          <td>${customer.ID}</td>
+          <td>${customer.Nama}</td>
+          <td>${customer.Umur}</td>
+          <td>${customer.Asal}</td>
+          <td>${customer.NoHp || "-"}</td>
+          <td>
+            <button class="btn btn-sm btn-primary" onclick="editCustomer(${
+              customer.ID
+            })">Edit</button>
+            <button class="btn btn-sm btn-danger" onclick="deleteCustomer(${
+              customer.ID
+            })">Delete</button>
+          </td>
+        `;
+          tableBody.appendChild(row);
+        });
+      }
+
+      // Load customers when page loads
+      document.addEventListener("DOMContentLoaded", fetchCustomers);
+
+      // Placeholder functions for edit and delete
+      function editCustomer(id) {
+        console.log("Edit customer:", id);
+      }
+
+      function deleteCustomer(id) {
+        console.log("Delete customer:", id);
+      }
+    </script>
+  </body>
+</html>

@@ -7,6 +7,7 @@ import (
 
 type IRepository interface {
 	CreateCustomer(user *CustomerModel) (*CustomerModel, e.ApiError)
+	FindAllCustomer() ([]CustomerModel, e.ApiError)
 }
 
 type repository struct {
@@ -17,11 +18,21 @@ func NewRepository(db *gorm.DB) *repository {
 	return &repository{db}
 }
 
-func (r *repository) CreateCustomer(user *CustomerModel) (*CustomerModel, e.ApiError) {
-	result := r.db.Create(user)
+func (r *repository) CreateCustomer(customer *CustomerModel) (*CustomerModel, e.ApiError) {
+	result := r.db.Create(customer)
 	if result.Error != nil {
 		return nil, e.NewApiError(e.ERROR_CREATE_CUSTOMER_REPOSITORY_FAILED, result.Error.Error())
 	}
 
-	return user, nil
+	return customer, nil
+}
+
+func (r *repository) FindAllCustomer() ([]CustomerModel, e.ApiError) {
+	var customers []CustomerModel
+	result := r.db.Find(&customers)
+	if result.Error != nil {
+		return nil, e.NewApiError(e.ERROR_GET_ALL_CUSTOMER_REPOSITORY_FAILED, result.Error.Error())
+	}
+
+	return customers, nil
 }
