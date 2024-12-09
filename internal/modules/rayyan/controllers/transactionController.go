@@ -7,6 +7,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/xcurvnubaim/pbkk-golang/internal/modules/rayyan/db"
 	"github.com/xcurvnubaim/pbkk-golang/internal/modules/rayyan/models"
+	"gorm.io/gorm"
 )
 
 // GetTransactions handles fetching all transactions
@@ -52,7 +53,17 @@ func CreateTransaction(c *gin.Context) {
 		return
 	}
 
-	
+	// Decrement product stock
+	for _, item := range transaction.Items {
+		if err := db.DB.Model(&models.Product{}).
+			Where("id = ? AND stock_quantity >= ?", item.ProductID, item.Quantity).
+			UpdateColumn("stock_quantity", gorm.Expr("stock_quantity - ?", item.Quantity)).Error; err != nil {
+			fmt.Println(err)
+			c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to update product stock"})
+			return
+		}
+	}
+		
 
 	c.JSON(http.StatusOK, gin.H{
 		"message":     "Transaction created successfully",

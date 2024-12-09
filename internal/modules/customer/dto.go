@@ -28,4 +28,23 @@ type (
 		Customers []CustomerDTO `json:"customers"`
 	}
 
+	UpdateCustomerRequestDTO struct {
+		ID   int32  `json:"id" binding:"required"`
+		Nama string `json:"nama" binding:"required"`
+		Umur int32  `json:"umur" binding:"required"`
+		Asal string `json:"asal" binding:"required"`
+		NoHp string `json:"no_hp" binding:"required"`
+	}
+
+	UpdateCustomerResponseDTO struct {
+		CustomerDTO
+	}
+
+	DeleteCustomerRequestDTO struct {
+		ID int32 `json:"id" binding:"required"`
+	}
+
+	DeleteCustomerResponseDTO struct {
+		ID int32 `json:"id"`
+	}
 )

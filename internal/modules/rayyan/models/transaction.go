@@ -15,6 +15,7 @@ type TransactionItem struct {
 	TotalPrice    float64 `json:"total_price"`
 }
 
+
 // Transaction represents a transaction in the POS system.
 // type Transaction struct {
 // 	ID               uint              `json:"id" gorm:"primaryKey"`
@@ -32,8 +33,9 @@ type Transaction struct {
 	TotalAmount float64   `json:"total_amount"`
 	CreatedAt   time.Time `json:"created_at"`
 	UpdatedAt   time.Time `json:"updated_at"`
+	Items 		[]TransactionItem `json:"items" gorm:"foreignKey:TransactionID"`
 }
 
 func (TransactionItem) TableName() string {
-	return "transaction_item" // Sesuaikan dengan nama tabel yang ada di database
+	return "transaction_items" // Sesuaikan dengan nama tabel yang ada di database
 }

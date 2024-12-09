@@ -63,3 +63,4 @@ func (u *useCase) FindAllCustomer() (*FindAllCustomerResponseDTO, e.ApiError) {
 
 	return &response, nil
 }
+
